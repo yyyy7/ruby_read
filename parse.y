@@ -10784,14 +10784,14 @@ node_assign(struct parser_params *p, NODE *lhs, NODE *rhs, const YYLTYPE *loc)
       case NODE_MASGN:
       case NODE_CDECL:
       case NODE_CVASGN:
-	lhs->nd_value = rhs;
-	nd_set_loc(lhs, loc);
-	break;
+	    lhs->nd_value = rhs;
+	    nd_set_loc(lhs, loc);
+	    break;
 
       case NODE_ATTRASGN:
-	lhs->nd_args = arg_append(p, lhs->nd_args, rhs, loc);
-	nd_set_loc(lhs, loc);
-	break;
+	    lhs->nd_args = arg_append(p, lhs->nd_args, rhs, loc);
+	    nd_set_loc(lhs, loc);
+	    break;
 
       default:
 	/* should not happen */

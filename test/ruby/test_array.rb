@@ -146,6 +146,7 @@ class TestArray < Test::Unit::TestCase
     x = [1, 2, 3, 4, 5]
 
     assert_equal(1, x.first)
+    assert_equal(2, x.second)
     assert_equal([1], x.first(1))
     assert_equal([1, 2, 3], x.first(3))
     assert_raise_with_message(ArgumentError, /0\.\.1/) {x.first(1, 2)}

@@ -41,7 +41,7 @@
 #endif
 
 #if 0
-#undef  VMDEBUG
+#undef VMDEBUG
 #define VMDEBUG 3
 #endif
 
@@ -52,10 +52,10 @@
 
 #ifdef HAVE_STDARG_PROTOTYPES
 #include <stdarg.h>
-#define va_init_list(a,b) va_start((a),(b))
+#define va_init_list(a, b) va_start((a), (b))
 #else
 #include <varargs.h>
-#define va_init_list(a,b) va_start((a))
+#define va_init_list(a, b) va_start((a))
 #endif
 
 #include "ruby_assert.h"
@@ -86,7 +86,7 @@
 #include "vm_opts.h"
 
 #include "ruby/thread_native.h"
-#if   defined(_WIN32)
+#if defined(_WIN32)
 #include "thread_win32.h"
 #elif defined(HAVE_PTHREAD_H)
 #include "thread_pthread.h"
@@ -101,54 +101,54 @@
  *   2: succinct bitvector
  */
 #ifndef VM_INSN_INFO_TABLE_IMPL
-# define VM_INSN_INFO_TABLE_IMPL 2
+#define VM_INSN_INFO_TABLE_IMPL 2
 #endif
 
-#if defined(NSIG_MAX)           /* POSIX issue 8 */
-# undef NSIG
-# define NSIG NSIG_MAX
-#elif defined(_SIG_MAXSIG)      /* FreeBSD */
-# undef NSIG
-# define NSIG _SIG_MAXSIG
-#elif defined(_SIGMAX)          /* QNX */
-# define NSIG (_SIGMAX + 1)
-#elif defined(NSIG)             /* 99% of everything else */
-# /* take it */
-#else                           /* Last resort */
-# define NSIG (sizeof(sigset_t) * CHAR_BIT + 1)
+#if defined(NSIG_MAX) /* POSIX issue 8 */
+#undef NSIG
+#define NSIG NSIG_MAX
+#elif defined(_SIG_MAXSIG) /* FreeBSD */
+#undef NSIG
+#define NSIG _SIG_MAXSIG
+#elif defined(_SIGMAX) /* QNX */
+#define NSIG (_SIGMAX + 1)
+#elif defined(NSIG) /* 99% of everything else */
+#                   /* take it */
+#else               /* Last resort */
+#define NSIG (sizeof(sigset_t) * CHAR_BIT + 1)
 #endif
 
 #define RUBY_NSIG NSIG
 
 #if defined(SIGCLD)
-#  define RUBY_SIGCHLD    (SIGCLD)
+#define RUBY_SIGCHLD (SIGCLD)
 #elif defined(SIGCHLD)
-#  define RUBY_SIGCHLD    (SIGCHLD)
+#define RUBY_SIGCHLD (SIGCHLD)
 #else
-#  define RUBY_SIGCHLD    (0)
+#define RUBY_SIGCHLD (0)
 #endif
 
 /* platforms with broken or non-existent SIGCHLD work by polling */
 #if defined(__APPLE__)
-#  define SIGCHLD_LOSSY (1)
+#define SIGCHLD_LOSSY (1)
 #else
-#  define SIGCHLD_LOSSY (0)
+#define SIGCHLD_LOSSY (0)
 #endif
 
 /* define to 0 to test old code path */
 #define WAITPID_USE_SIGCHLD (RUBY_SIGCHLD || SIGCHLD_LOSSY)
 
 #if defined(SIGSEGV) && defined(HAVE_SIGALTSTACK) && defined(SA_SIGINFO) && !defined(__NetBSD__)
-#  define USE_SIGALTSTACK
+#define USE_SIGALTSTACK
 void *rb_allocate_sigaltstack(void);
 void *rb_register_sigaltstack(void *);
-#  define RB_ALTSTACK_INIT(var, altstack) var = rb_register_sigaltstack(altstack)
-#  define RB_ALTSTACK_FREE(var) xfree(var)
-#  define RB_ALTSTACK(var)  var
+#define RB_ALTSTACK_INIT(var, altstack) var = rb_register_sigaltstack(altstack)
+#define RB_ALTSTACK_FREE(var) xfree(var)
+#define RB_ALTSTACK(var) var
 #else /* noop */
-#  define RB_ALTSTACK_INIT(var, altstack)
-#  define RB_ALTSTACK_FREE(var)
-#  define RB_ALTSTACK(var) (0)
+#define RB_ALTSTACK_INIT(var, altstack)
+#define RB_ALTSTACK_FREE(var)
+#define RB_ALTSTACK(var) (0)
 #endif
 
 /*****************/
@@ -176,44 +176,46 @@ void *rb_register_sigaltstack(void *);
 #endif
 
 /* call threaded code */
-#if    OPT_CALL_THREADED_CODE
-#if    OPT_DIRECT_THREADED_CODE
+#if OPT_CALL_THREADED_CODE
+#if OPT_DIRECT_THREADED_CODE
 #undef OPT_DIRECT_THREADED_CODE
 #endif /* OPT_DIRECT_THREADED_CODE */
-#if    OPT_STACK_CACHING
+#if OPT_STACK_CACHING
 #undef OPT_STACK_CACHING
 #endif /* OPT_STACK_CACHING */
 #endif /* OPT_CALL_THREADED_CODE */
 
 void rb_vm_encoded_insn_data_table_init(void);
 typedef unsigned long rb_num_t;
-typedef   signed long rb_snum_t;
+typedef signed long rb_snum_t;
 
-enum ruby_tag_type {
-    RUBY_TAG_NONE	= 0x0,
-    RUBY_TAG_RETURN	= 0x1,
-    RUBY_TAG_BREAK	= 0x2,
-    RUBY_TAG_NEXT	= 0x3,
-    RUBY_TAG_RETRY	= 0x4,
-    RUBY_TAG_REDO	= 0x5,
-    RUBY_TAG_RAISE	= 0x6,
-    RUBY_TAG_THROW	= 0x7,
-    RUBY_TAG_FATAL	= 0x8,
-    RUBY_TAG_MASK	= 0xf
+enum ruby_tag_type
+{
+    RUBY_TAG_NONE = 0x0,
+    RUBY_TAG_RETURN = 0x1,
+    RUBY_TAG_BREAK = 0x2,
+    RUBY_TAG_NEXT = 0x3,
+    RUBY_TAG_RETRY = 0x4,
+    RUBY_TAG_REDO = 0x5,
+    RUBY_TAG_RAISE = 0x6,
+    RUBY_TAG_THROW = 0x7,
+    RUBY_TAG_FATAL = 0x8,
+    RUBY_TAG_MASK = 0xf
 };
 
-#define TAG_NONE	RUBY_TAG_NONE
-#define TAG_RETURN	RUBY_TAG_RETURN
-#define TAG_BREAK	RUBY_TAG_BREAK
-#define TAG_NEXT	RUBY_TAG_NEXT
-#define TAG_RETRY	RUBY_TAG_RETRY
-#define TAG_REDO	RUBY_TAG_REDO
-#define TAG_RAISE	RUBY_TAG_RAISE
-#define TAG_THROW	RUBY_TAG_THROW
-#define TAG_FATAL	RUBY_TAG_FATAL
-#define TAG_MASK	RUBY_TAG_MASK
+#define TAG_NONE RUBY_TAG_NONE
+#define TAG_RETURN RUBY_TAG_RETURN
+#define TAG_BREAK RUBY_TAG_BREAK
+#define TAG_NEXT RUBY_TAG_NEXT
+#define TAG_RETRY RUBY_TAG_RETRY
+#define TAG_REDO RUBY_TAG_REDO
+#define TAG_RAISE RUBY_TAG_RAISE
+#define TAG_THROW RUBY_TAG_THROW
+#define TAG_FATAL RUBY_TAG_FATAL
+#define TAG_MASK RUBY_TAG_MASK
 
-enum ruby_vm_throw_flags {
+enum ruby_vm_throw_flags
+{
     VM_THROW_NO_ESCAPE_FLAG = 0x8000,
     VM_THROW_STATE_MASK = 0xff
 };
@@ -225,27 +227,31 @@ struct rb_control_frame_struct;
 /* iseq data type */
 typedef struct rb_compile_option_struct rb_compile_option_t;
 
-struct iseq_inline_cache_entry {
+struct iseq_inline_cache_entry
+{
     rb_serial_t ic_serial;
     const rb_cref_t *ic_cref;
     VALUE value;
 };
 
-struct iseq_inline_iv_cache_entry {
+struct iseq_inline_iv_cache_entry
+{
     rb_serial_t ic_serial;
     size_t index;
 };
 
 union iseq_inline_storage_entry {
-    struct {
-	struct rb_thread_struct *running_thread;
-	VALUE value;
+    struct
+    {
+        struct rb_thread_struct *running_thread;
+        VALUE value;
     } once;
     struct iseq_inline_cache_entry cache;
     struct iseq_inline_iv_cache_entry iv_cache;
 };
 
-struct rb_calling_info {
+struct rb_calling_info
+{
     VALUE block_handler;
     VALUE recv;
     int argc;
@@ -255,13 +261,14 @@ struct rb_calling_info {
 struct rb_execution_context_struct;
 
 #if 1
-#define CoreDataFromValue(obj, type) (type*)DATA_PTR(obj)
+#define CoreDataFromValue(obj, type) (type *)DATA_PTR(obj)
 #else
-#define CoreDataFromValue(obj, type) (type*)rb_data_object_get(obj)
+#define CoreDataFromValue(obj, type) (type *)rb_data_object_get(obj)
 #endif
 #define GetCoreDataFromValue(obj, type, ptr) ((ptr) = CoreDataFromValue((obj), type))
 
-typedef struct rb_iseq_location_struct {
+typedef struct rb_iseq_location_struct
+{
     VALUE pathobj;      /* String (path) or Array [path, realpath]. Frozen. */
     VALUE base_label;   /* String */
     VALUE label;        /* String */
@@ -270,48 +277,54 @@ typedef struct rb_iseq_location_struct {
     rb_code_location_t code_location;
 } rb_iseq_location_t;
 
-#define PATHOBJ_PATH     0
+#define PATHOBJ_PATH 0
 #define PATHOBJ_REALPATH 1
 
 static inline VALUE
 pathobj_path(VALUE pathobj)
 {
-    if (RB_TYPE_P(pathobj, T_STRING)) {
-	return pathobj;
+    if (RB_TYPE_P(pathobj, T_STRING))
+    {
+        return pathobj;
     }
-    else {
-	VM_ASSERT(RB_TYPE_P(pathobj, T_ARRAY));
-	return RARRAY_AREF(pathobj, PATHOBJ_PATH);
+    else
+    {
+        VM_ASSERT(RB_TYPE_P(pathobj, T_ARRAY));
+        return RARRAY_AREF(pathobj, PATHOBJ_PATH);
     }
 }
 
 static inline VALUE
 pathobj_realpath(VALUE pathobj)
 {
-    if (RB_TYPE_P(pathobj, T_STRING)) {
-	return pathobj;
+    if (RB_TYPE_P(pathobj, T_STRING))
+    {
+        return pathobj;
     }
-    else {
-	VM_ASSERT(RB_TYPE_P(pathobj, T_ARRAY));
-	return RARRAY_AREF(pathobj, PATHOBJ_REALPATH);
+    else
+    {
+        VM_ASSERT(RB_TYPE_P(pathobj, T_ARRAY));
+        return RARRAY_AREF(pathobj, PATHOBJ_REALPATH);
     }
 }
 
 /* Forward declarations */
 struct rb_mjit_unit;
 
-struct rb_iseq_constant_body {
-    enum iseq_type {
-	ISEQ_TYPE_TOP,
-	ISEQ_TYPE_METHOD,
-	ISEQ_TYPE_BLOCK,
-	ISEQ_TYPE_CLASS,
-	ISEQ_TYPE_RESCUE,
-	ISEQ_TYPE_ENSURE,
-	ISEQ_TYPE_EVAL,
-	ISEQ_TYPE_MAIN,
-	ISEQ_TYPE_PLAIN
-    } type;              /* instruction sequence type */
+struct rb_iseq_constant_body
+{
+    enum iseq_type
+    {
+        ISEQ_TYPE_TOP,
+        ISEQ_TYPE_METHOD,
+        ISEQ_TYPE_BLOCK,
+        ISEQ_TYPE_CLASS,
+        ISEQ_TYPE_RESCUE,
+        ISEQ_TYPE_ENSURE,
+        ISEQ_TYPE_EVAL,
+        ISEQ_TYPE_MAIN,
+        ISEQ_TYPE_PLAIN
+    } type; /* instruction sequence type */
 
     unsigned int iseq_size;
     VALUE *iseq_encoded; /* encoded iseq (insn addr and operands) */
@@ -339,32 +352,34 @@ struct rb_iseq_constant_body {
      *  size         = M+N+O+(*1)+K+(&1)+(**1) // parameter size.
      */
 
-    struct {
-	struct {
-	    unsigned int has_lead   : 1;
-	    unsigned int has_opt    : 1;
-	    unsigned int has_rest   : 1;
-	    unsigned int has_post   : 1;
-	    unsigned int has_kw     : 1;
-	    unsigned int has_kwrest : 1;
-	    unsigned int has_block  : 1;
+    struct
+    {
+        struct
+        {
+            unsigned int has_lead : 1;
+            unsigned int has_opt : 1;
+            unsigned int has_rest : 1;
+            unsigned int has_post : 1;
+            unsigned int has_kw : 1;
+            unsigned int has_kwrest : 1;
+            unsigned int has_block : 1;
 
-	    unsigned int ambiguous_param0 : 1; /* {|a|} */
-	    unsigned int accepts_no_kwarg : 1;
-            unsigned int ruby2_keywords: 1;
-	} flags;
+            unsigned int ambiguous_param0 : 1; /* {|a|} */
+            unsigned int accepts_no_kwarg : 1;
+            unsigned int ruby2_keywords : 1;
+        } flags;
 
-	unsigned int size;
+        unsigned int size;
 
-	int lead_num;
-	int opt_num;
-	int rest_start;
-	int post_start;
-	int post_num;
-	int block_start;
+        int lead_num;
+        int opt_num;
+        int rest_start;
+        int post_start;
+        int post_num;
+        int block_start;
 
-	const VALUE *opt_table; /* (opt_num + 1) entries. */
-	/* opt_num and opt_table:
+        const VALUE *opt_table; /* (opt_num + 1) entries. */
+        /* opt_num and opt_table:
 	 *
 	 * def foo o1=e1, o2=e2, ..., oN=eN
 	 * #=>
@@ -378,29 +393,31 @@ struct rb_iseq_constant_body {
 	 * opt_table = [A1, A2, ..., AN, AL]
 	 */
 
-	const struct rb_iseq_param_keyword {
-	    int num;
-	    int required_num;
-	    int bits_start;
-	    int rest_start;
-	    const ID *table;
+        const struct rb_iseq_param_keyword
+        {
+            int num;
+            int required_num;
+            int bits_start;
+            int rest_start;
+            const ID *table;
             VALUE *default_values;
-	} *keyword;
+        } * keyword;
     } param;
 
     rb_iseq_location_t location;
 
     /* insn info, must be freed */
-    struct iseq_insn_info {
-	const struct iseq_insn_info_entry *body;
-	unsigned int *positions;
-	unsigned int size;
+    struct iseq_insn_info
+    {
+        const struct iseq_insn_info_entry *body;
+        unsigned int *positions;
+        unsigned int size;
 #if VM_INSN_INFO_TABLE_IMPL == 2
-	struct succ_index_table *succ_index_table;
+        struct succ_index_table *succ_index_table;
 #endif
     } insns_info;
 
-    const ID *local_table;		/* must free */
+    const ID *local_table; /* must free */
 
     /* catch table */
     struct iseq_catch_table *catch_table;
@@ -412,11 +429,12 @@ struct rb_iseq_constant_body {
     union iseq_inline_storage_entry *is_entries;
     struct rb_call_data *call_data; //struct rb_call_data calls[ci_size];
 
-    struct {
-	rb_snum_t flip_count;
-	VALUE coverage;
+    struct
+    {
+        rb_snum_t flip_count;
+        VALUE coverage;
         VALUE pc2branchindex;
-	VALUE *original_iseq;
+        VALUE *original_iseq;
     } variable;
 
     unsigned int local_table_size;
@@ -428,9 +446,10 @@ struct rb_iseq_constant_body {
 
 #if USE_MJIT
     /* The following fields are MJIT related info.  */
-    VALUE (*jit_func)(struct rb_execution_context_struct *,
-                      struct rb_control_frame_struct *); /* function pointer for loaded native code */
-    long unsigned total_calls; /* number of total calls with `mjit_exec()` */
+    VALUE (*jit_func)
+    (struct rb_execution_context_struct *,
+     struct rb_control_frame_struct *); /* function pointer for loaded native code */
+    long unsigned total_calls;          /* number of total calls with `mjit_exec()` */
     struct rb_mjit_unit *jit_unit;
 #endif
 
@@ -439,21 +458,24 @@ struct rb_iseq_constant_body {
 
 /* T_IMEMO/iseq */
 /* typedef rb_iseq_t is in method.h */
-struct rb_iseq_struct {
-    VALUE flags; /* 1 */
+struct rb_iseq_struct
+{
+    VALUE flags;   /* 1 */
     VALUE wrapper; /* 2 */
 
-    struct rb_iseq_constant_body *body;  /* 3 */
+    struct rb_iseq_constant_body *body; /* 3 */
 
-    union { /* 4, 5 words */
-	struct iseq_compile_data *compile_data; /* used at compile time */
+    union {                                     /* 4, 5 words */
+        struct iseq_compile_data *compile_data; /* used at compile time */
 
-	struct {
-	    VALUE obj;
-	    int index;
-	} loader;
+        struct
+        {
+            VALUE obj;
+            int index;
+        } loader;
 
-        struct {
+        struct
+        {
             struct rb_hook_list_struct *local_hooks;
             rb_event_flag_t global_trace_events;
         } exec;
@@ -472,8 +494,9 @@ static inline const rb_iseq_t *
 rb_iseq_check(const rb_iseq_t *iseq)
 {
 #if USE_LAZY_LOAD
-    if (iseq->body == NULL) {
-	rb_iseq_complete((rb_iseq_t *)iseq);
+    if (iseq->body == NULL)
+    {
+        rb_iseq_complete((rb_iseq_t *)iseq);
     }
 #endif
     return iseq;
@@ -484,12 +507,14 @@ def_iseq_ptr(rb_method_definition_t *def)
 {
 //TODO: re-visit. to check the bug, enable this assertion.
 #if VM_CHECK_MODE > 0
-    if (def->type != VM_METHOD_TYPE_ISEQ) rb_bug("def_iseq_ptr: not iseq (%d)", def->type);
+    if (def->type != VM_METHOD_TYPE_ISEQ)
+        rb_bug("def_iseq_ptr: not iseq (%d)", def->type);
 #endif
     return rb_iseq_check(def->body.iseq.iseqptr);
 }
 
-enum ruby_special_exceptions {
+enum ruby_special_exceptions
+{
     ruby_error_reenter,
     ruby_error_nomemory,
     ruby_error_sysstack,
@@ -498,7 +523,8 @@ enum ruby_special_exceptions {
     ruby_special_error_count
 };
 
-enum ruby_basic_operators {
+enum ruby_basic_operators
+{
     BOP_PLUS,
     BOP_MINUS,
     BOP_MULT,
@@ -533,12 +559,13 @@ enum ruby_basic_operators {
 };
 
 #define GetVMPtr(obj, ptr) \
-  GetCoreDataFromValue((obj), rb_vm_t, (ptr))
+    GetCoreDataFromValue((obj), rb_vm_t, (ptr))
 
 struct rb_vm_struct;
-typedef void rb_vm_at_exit_func(struct rb_vm_struct*);
+typedef void rb_vm_at_exit_func(struct rb_vm_struct *);
 
-typedef struct rb_at_exit_list {
+typedef struct rb_at_exit_list
+{
     rb_vm_at_exit_func *func;
     struct rb_at_exit_list *next;
 } rb_at_exit_list;
@@ -548,18 +575,19 @@ struct rb_objspace *rb_objspace_alloc(void);
 void rb_objspace_free(struct rb_objspace *);
 void rb_objspace_call_finalizer(struct rb_objspace *);
 
-typedef struct rb_hook_list_struct {
+typedef struct rb_hook_list_struct
+{
     struct rb_event_hook_struct *hooks;
     rb_event_flag_t events;
     unsigned int need_clean;
     unsigned int running;
 } rb_hook_list_t;
 
-
 // see builtin.h for definition
 typedef const struct rb_builtin_function *RB_BUILTIN;
 
-typedef struct rb_vm_struct {
+typedef struct rb_vm_struct
+{
     VALUE self;
 
     rb_global_vm_lock_t gvl;
@@ -577,7 +605,7 @@ typedef struct rb_vm_struct {
     rb_nativethread_lock_t waitpid_lock;
     struct list_head waiting_pids; /* PID > 0: <=> struct waitpid_state */
     struct list_head waiting_grps; /* PID <= 0: <=> struct waitpid_state */
-    struct list_head waiting_fds; /* <=> struct waiting_fd */
+    struct list_head waiting_fds;  /* <=> struct waiting_fd */
     struct list_head living_threads;
     VALUE thgroup_default;
     int living_thread_num;
@@ -585,11 +613,11 @@ typedef struct rb_vm_struct {
     /* set in single-threaded processes only: */
     volatile int ubf_async_safe;
 
-    unsigned int running: 1;
-    unsigned int thread_abort_on_exception: 1;
-    unsigned int thread_report_on_exception: 1;
+    unsigned int running : 1;
+    unsigned int thread_abort_on_exception : 1;
+    unsigned int thread_report_on_exception : 1;
 
-    unsigned int safe_level_: 1;
+    unsigned int safe_level_ : 1;
     int sleeper;
 
     /* object management */
@@ -608,8 +636,9 @@ typedef struct rb_vm_struct {
     struct st_table *loading_table;
 
     /* signal */
-    struct {
-	VALUE cmd[RUBY_NSIG];
+    struct
+    {
+        VALUE cmd[RUBY_NSIG];
     } trap_list;
 
     /* hook */
@@ -632,7 +661,7 @@ typedef struct rb_vm_struct {
     VALUE coverages;
     int coverage_mode;
 
-    st_table * defined_module_hash;
+    st_table *defined_module_hash;
 
     struct rb_objspace *objspace;
 
@@ -645,11 +674,12 @@ typedef struct rb_vm_struct {
     int builtin_inline_index;
 
     /* params */
-    struct { /* size in byte */
-	size_t thread_vm_stack_size;
-	size_t thread_machine_stack_size;
-	size_t fiber_vm_stack_size;
-	size_t fiber_machine_stack_size;
+    struct
+    { /* size in byte */
+        size_t thread_vm_stack_size;
+        size_t thread_machine_stack_size;
+        size_t fiber_vm_stack_size;
+        size_t fiber_machine_stack_size;
     } default_params;
 
     short redefined_flag[BOP_LAST_];
@@ -659,48 +689,48 @@ typedef struct rb_vm_struct {
 
 #define RUBY_VM_SIZE_ALIGN 4096
 
-#define RUBY_VM_THREAD_VM_STACK_SIZE          ( 128 * 1024 * sizeof(VALUE)) /*  512 KB or 1024 KB */
-#define RUBY_VM_THREAD_VM_STACK_SIZE_MIN      (   2 * 1024 * sizeof(VALUE)) /*    8 KB or   16 KB */
-#define RUBY_VM_THREAD_MACHINE_STACK_SIZE     ( 128 * 1024 * sizeof(VALUE)) /*  512 KB or 1024 KB */
-#define RUBY_VM_THREAD_MACHINE_STACK_SIZE_MIN (  16 * 1024 * sizeof(VALUE)) /*   64 KB or  128 KB */
+#define RUBY_VM_THREAD_VM_STACK_SIZE (128 * 1024 * sizeof(VALUE))         /*  512 KB or 1024 KB */
+#define RUBY_VM_THREAD_VM_STACK_SIZE_MIN (2 * 1024 * sizeof(VALUE))       /*    8 KB or   16 KB */
+#define RUBY_VM_THREAD_MACHINE_STACK_SIZE (128 * 1024 * sizeof(VALUE))    /*  512 KB or 1024 KB */
+#define RUBY_VM_THREAD_MACHINE_STACK_SIZE_MIN (16 * 1024 * sizeof(VALUE)) /*   64 KB or  128 KB */
 
-#define RUBY_VM_FIBER_VM_STACK_SIZE           (  16 * 1024 * sizeof(VALUE)) /*   64 KB or  128 KB */
-#define RUBY_VM_FIBER_VM_STACK_SIZE_MIN       (   2 * 1024 * sizeof(VALUE)) /*    8 KB or   16 KB */
-#define RUBY_VM_FIBER_MACHINE_STACK_SIZE      (  64 * 1024 * sizeof(VALUE)) /*  256 KB or  512 KB */
+#define RUBY_VM_FIBER_VM_STACK_SIZE (16 * 1024 * sizeof(VALUE))      /*   64 KB or  128 KB */
+#define RUBY_VM_FIBER_VM_STACK_SIZE_MIN (2 * 1024 * sizeof(VALUE))   /*    8 KB or   16 KB */
+#define RUBY_VM_FIBER_MACHINE_STACK_SIZE (64 * 1024 * sizeof(VALUE)) /*  256 KB or  512 KB */
 #if defined(__powerpc64__)
-#define RUBY_VM_FIBER_MACHINE_STACK_SIZE_MIN  (  32 * 1024 * sizeof(VALUE)) /*   128 KB or  256 KB */
+#define RUBY_VM_FIBER_MACHINE_STACK_SIZE_MIN (32 * 1024 * sizeof(VALUE)) /*   128 KB or  256 KB */
 #else
-#define RUBY_VM_FIBER_MACHINE_STACK_SIZE_MIN  (  16 * 1024 * sizeof(VALUE)) /*   64 KB or  128 KB */
+#define RUBY_VM_FIBER_MACHINE_STACK_SIZE_MIN (16 * 1024 * sizeof(VALUE)) /*   64 KB or  128 KB */
 #endif
 
 #if __has_feature(memory_sanitizer) || __has_feature(address_sanitizer)
 /* It seems sanitizers consume A LOT of machine stacks */
-#undef  RUBY_VM_THREAD_MACHINE_STACK_SIZE
-#define RUBY_VM_THREAD_MACHINE_STACK_SIZE     (1024 * 1024 * sizeof(VALUE))
-#undef  RUBY_VM_THREAD_MACHINE_STACK_SIZE_MIN
-#define RUBY_VM_THREAD_MACHINE_STACK_SIZE_MIN ( 512 * 1024 * sizeof(VALUE))
-#undef  RUBY_VM_FIBER_MACHINE_STACK_SIZE
-#define RUBY_VM_FIBER_MACHINE_STACK_SIZE      ( 256 * 1024 * sizeof(VALUE))
-#undef  RUBY_VM_FIBER_MACHINE_STACK_SIZE_MIN
-#define RUBY_VM_FIBER_MACHINE_STACK_SIZE_MIN  ( 128 * 1024 * sizeof(VALUE))
+#undef RUBY_VM_THREAD_MACHINE_STACK_SIZE
+#define RUBY_VM_THREAD_MACHINE_STACK_SIZE (1024 * 1024 * sizeof(VALUE))
+#undef RUBY_VM_THREAD_MACHINE_STACK_SIZE_MIN
+#define RUBY_VM_THREAD_MACHINE_STACK_SIZE_MIN (512 * 1024 * sizeof(VALUE))
+#undef RUBY_VM_FIBER_MACHINE_STACK_SIZE
+#define RUBY_VM_FIBER_MACHINE_STACK_SIZE (256 * 1024 * sizeof(VALUE))
+#undef RUBY_VM_FIBER_MACHINE_STACK_SIZE_MIN
+#define RUBY_VM_FIBER_MACHINE_STACK_SIZE_MIN (128 * 1024 * sizeof(VALUE))
 #endif
 
 /* optimize insn */
 #define INTEGER_REDEFINED_OP_FLAG (1 << 0)
-#define FLOAT_REDEFINED_OP_FLAG  (1 << 1)
+#define FLOAT_REDEFINED_OP_FLAG (1 << 1)
 #define STRING_REDEFINED_OP_FLAG (1 << 2)
-#define ARRAY_REDEFINED_OP_FLAG  (1 << 3)
-#define HASH_REDEFINED_OP_FLAG   (1 << 4)
+#define ARRAY_REDEFINED_OP_FLAG (1 << 3)
+#define HASH_REDEFINED_OP_FLAG (1 << 4)
 /* #define BIGNUM_REDEFINED_OP_FLAG (1 << 5) */
 #define SYMBOL_REDEFINED_OP_FLAG (1 << 6)
-#define TIME_REDEFINED_OP_FLAG   (1 << 7)
+#define TIME_REDEFINED_OP_FLAG (1 << 7)
 #define REGEXP_REDEFINED_OP_FLAG (1 << 8)
-#define NIL_REDEFINED_OP_FLAG    (1 << 9)
-#define TRUE_REDEFINED_OP_FLAG   (1 << 10)
-#define FALSE_REDEFINED_OP_FLAG  (1 << 11)
-#define PROC_REDEFINED_OP_FLAG   (1 << 12)
+#define NIL_REDEFINED_OP_FLAG (1 << 9)
+#define TRUE_REDEFINED_OP_FLAG (1 << 10)
+#define FALSE_REDEFINED_OP_FLAG (1 << 11)
+#define PROC_REDEFINED_OP_FLAG (1 << 12)
 
-#define BASIC_OP_UNREDEFINED_P(op, klass) (LIKELY((GET_VM()->redefined_flag[(op)]&(klass)) == 0))
+#define BASIC_OP_UNREDEFINED_P(op, klass) (LIKELY((GET_VM()->redefined_flag[(op)] & (klass)) == 0))
 
 #ifndef VM_DEBUG_BP_CHECK
 #define VM_DEBUG_BP_CHECK 0
@@ -710,50 +740,55 @@ typedef struct rb_vm_struct {
 #define VM_DEBUG_VERIFY_METHOD_CACHE (VMDEBUG != 0)
 #endif
 
-struct rb_captured_block {
+struct rb_captured_block
+{
     VALUE self;
     const VALUE *ep;
     union {
-	const rb_iseq_t *iseq;
-	const struct vm_ifunc *ifunc;
-	VALUE val;
+        const rb_iseq_t *iseq;
+        const struct vm_ifunc *ifunc;
+        VALUE val;
     } code;
 };
 
-enum rb_block_handler_type {
+enum rb_block_handler_type
+{
     block_handler_type_iseq,
     block_handler_type_ifunc,
     block_handler_type_symbol,
     block_handler_type_proc
 };
 
-enum rb_block_type {
+enum rb_block_type
+{
     block_type_iseq,
     block_type_ifunc,
     block_type_symbol,
     block_type_proc
 };
 
-struct rb_block {
+struct rb_block
+{
     union {
-	struct rb_captured_block captured;
-	VALUE symbol;
-	VALUE proc;
+        struct rb_captured_block captured;
+        VALUE symbol;
+        VALUE proc;
     } as;
     enum rb_block_type type;
 };
 
-typedef struct rb_control_frame_struct {
-    const VALUE *pc;		/* cfp[0] */
-    VALUE *sp;			/* cfp[1] */
-    const rb_iseq_t *iseq;	/* cfp[2] */
-    VALUE self;			/* cfp[3] / block[0] */
-    const VALUE *ep;		/* cfp[4] / block[1] */
-    const void *block_code;     /* cfp[5] / block[2] */ /* iseq or ifunc or forwarded block handler */
-    VALUE *__bp__;              /* cfp[6] */ /* outside vm_push_frame, use vm_base_ptr instead. */
+typedef struct rb_control_frame_struct
+{
+    const VALUE *pc;                                /* cfp[0] */
+    VALUE *sp;                                      /* cfp[1] */
+    const rb_iseq_t *iseq;                          /* cfp[2] */
+    VALUE self;                                     /* cfp[3] / block[0] */
+    const VALUE *ep;                                /* cfp[4] / block[1] */
+    const void *block_code; /* cfp[5] / block[2] */ /* iseq or ifunc or forwarded block handler */
+    VALUE *__bp__; /* cfp[6] */                     /* outside vm_push_frame, use vm_base_ptr instead. */
 
 #if VM_DEBUG_BP_CHECK
-    VALUE *bp_check;		/* cfp[7] */
+    VALUE *bp_check; /* cfp[7] */
 #endif
 } rb_control_frame_t;
 
@@ -765,7 +800,8 @@ rb_thread_ptr(VALUE thval)
     return (struct rb_thread_struct *)rb_check_typeddata(thval, &ruby_threadptr_data_type);
 }
 
-enum rb_thread_status {
+enum rb_thread_status
+{
     THREAD_RUNNABLE,
     THREAD_STOPPED,
     THREAD_STOPPED_FOREVER,
@@ -782,7 +818,8 @@ typedef void *rb_jmpbuf_t[5];
   the members which are written in EC_PUSH_TAG() should be placed at
   the beginning and the end, so that entire region is accessible.
 */
-struct rb_vm_tag {
+struct rb_vm_tag
+{
     VALUE tag;
     VALUE retval;
     rb_jmpbuf_t buf;
@@ -792,32 +829,38 @@ struct rb_vm_tag {
 
 STATIC_ASSERT(rb_vm_tag_buf_offset, offsetof(struct rb_vm_tag, buf) > 0);
 STATIC_ASSERT(rb_vm_tag_buf_end,
-	      offsetof(struct rb_vm_tag, buf) + sizeof(rb_jmpbuf_t) <
-	      sizeof(struct rb_vm_tag));
+              offsetof(struct rb_vm_tag, buf) + sizeof(rb_jmpbuf_t) <
+                  sizeof(struct rb_vm_tag));
 
-struct rb_vm_protect_tag {
+struct rb_vm_protect_tag
+{
     struct rb_vm_protect_tag *prev;
 };
 
-struct rb_unblock_callback {
+struct rb_unblock_callback
+{
     rb_unblock_function_t *func;
     void *arg;
 };
 
 struct rb_mutex_struct;
 
-typedef struct rb_thread_list_struct{
+typedef struct rb_thread_list_struct
+{
     struct rb_thread_list_struct *next;
     struct rb_thread_struct *th;
 } rb_thread_list_t;
 
-typedef struct rb_ensure_entry {
+typedef struct rb_ensure_entry
+{
     VALUE marker;
-    VALUE (*e_proc)(VALUE);
+    VALUE (*e_proc)
+    (VALUE);
     VALUE data2;
 } rb_ensure_entry_t;
 
-typedef struct rb_ensure_list {
+typedef struct rb_ensure_list
+{
     struct rb_ensure_list *next;
     struct rb_ensure_entry entry;
 } rb_ensure_list_t;
@@ -826,10 +869,11 @@ typedef char rb_thread_id_string_t[sizeof(rb_nativethread_id_t) * 2 + 3];
 
 typedef struct rb_fiber_struct rb_fiber_t;
 
-struct rb_execution_context_struct {
+struct rb_execution_context_struct
+{
     /* execution information */
-    VALUE *vm_stack;		/* must free, must mark */
-    size_t vm_stack_size;       /* size in word (byte size / sizeof(VALUE)) */
+    VALUE *vm_stack;      /* must free, must mark */
+    size_t vm_stack_size; /* size in word (byte size / sizeof(VALUE)) */
     rb_control_frame_t *cfp;
 
     struct rb_vm_tag *tag;
@@ -869,11 +913,13 @@ struct rb_execution_context_struct {
     VALUE private_const_reference;
 
     /* for GC */
-    struct {
-	VALUE *stack_start;
-	VALUE *stack_end;
-	size_t stack_maxsize;
-	RUBY_ALIGNAS(SIZEOF_VALUE) jmp_buf regs;
+    struct
+    {
+        VALUE *stack_start;
+        VALUE *stack_end;
+        size_t stack_maxsize;
+        RUBY_ALIGNAS(SIZEOF_VALUE)
+        jmp_buf regs;
     } machine;
 };
 
@@ -898,7 +944,8 @@ void rb_ec_initialize_vm_stack(rb_execution_context_t *ec, VALUE *stack, size_t 
 // @param ec the execution context to update.
 void rb_ec_clear_vm_stack(rb_execution_context_t *ec);
 
-typedef struct rb_thread_struct {
+typedef struct rb_thread_struct
+{
     struct list_node vmlt_node;
     VALUE self;
     rb_vm_t *vm;
@@ -922,10 +969,10 @@ typedef struct rb_thread_struct {
     BITFIELD(enum rb_thread_status, status, 2);
     /* bit flags */
     unsigned int to_kill : 1;
-    unsigned int abort_on_exception: 1;
-    unsigned int report_on_exception: 1;
-    unsigned int pending_interrupt_queue_checked: 1;
-    int8_t priority; /* -3 .. 3 (RUBY_THREAD_PRIORITY_{MIN,MAX}) */
+    unsigned int abort_on_exception : 1;
+    unsigned int report_on_exception : 1;
+    unsigned int pending_interrupt_queue_checked : 1;
+    int8_t priority;          /* -3 .. 3 (RUBY_THREAD_PRIORITY_{MIN,MAX}) */
     uint32_t running_time_us; /* 12500..800000 */
 
     native_thread_data_t native_thread_data;
@@ -952,18 +999,22 @@ typedef struct rb_thread_struct {
     rb_thread_list_t *join_list;
 
     union {
-        struct {
+        struct
+        {
             VALUE proc;
             VALUE args;
             int kw_splat;
         } proc;
-        struct {
-            VALUE (*func)(void *);
+        struct
+        {
+            VALUE (*func)
+            (void *);
             void *arg;
         } func;
     } invoke_arg;
 
-    enum {
+    enum
+    {
         thread_invoke_type_none = 0,
         thread_invoke_type_proc,
         thread_invoke_type_func
@@ -985,32 +1036,34 @@ typedef struct rb_thread_struct {
 
 } rb_thread_t;
 
-typedef enum {
-    VM_DEFINECLASS_TYPE_CLASS           = 0x00,
+typedef enum
+{
+    VM_DEFINECLASS_TYPE_CLASS = 0x00,
     VM_DEFINECLASS_TYPE_SINGLETON_CLASS = 0x01,
-    VM_DEFINECLASS_TYPE_MODULE          = 0x02,
+    VM_DEFINECLASS_TYPE_MODULE = 0x02,
     /* 0x03..0x06 is reserved */
-    VM_DEFINECLASS_TYPE_MASK            = 0x07
+    VM_DEFINECLASS_TYPE_MASK = 0x07
 } rb_vm_defineclass_type_t;
 
-#define VM_DEFINECLASS_TYPE(x) ((rb_vm_defineclass_type_t)(x) & VM_DEFINECLASS_TYPE_MASK)
-#define VM_DEFINECLASS_FLAG_SCOPED         0x08
+#define VM_DEFINECLASS_TYPE(x) ((rb_vm_defineclass_type_t)(x)&VM_DEFINECLASS_TYPE_MASK)
+#define VM_DEFINECLASS_FLAG_SCOPED 0x08
 #define VM_DEFINECLASS_FLAG_HAS_SUPERCLASS 0x10
-#define VM_DEFINECLASS_SCOPED_P(x) ((x) & VM_DEFINECLASS_FLAG_SCOPED)
+#define VM_DEFINECLASS_SCOPED_P(x) ((x)&VM_DEFINECLASS_FLAG_SCOPED)
 #define VM_DEFINECLASS_HAS_SUPERCLASS_P(x) \
-    ((x) & VM_DEFINECLASS_FLAG_HAS_SUPERCLASS)
+    ((x)&VM_DEFINECLASS_FLAG_HAS_SUPERCLASS)
 
 /* iseq.c */
 RUBY_SYMBOL_EXPORT_BEGIN
 
 /* node -> iseq */
-rb_iseq_t *rb_iseq_new         (const rb_ast_body_t *ast, VALUE name, VALUE path, VALUE realpath, const rb_iseq_t *parent, enum iseq_type);
-rb_iseq_t *rb_iseq_new_top     (const rb_ast_body_t *ast, VALUE name, VALUE path, VALUE realpath, const rb_iseq_t *parent);
-rb_iseq_t *rb_iseq_new_main    (const rb_ast_body_t *ast,             VALUE path, VALUE realpath, const rb_iseq_t *parent);
+rb_iseq_t *rb_iseq_new(const rb_ast_body_t *ast, VALUE name, VALUE path, VALUE realpath, const rb_iseq_t *parent, enum iseq_type);
+rb_iseq_t *rb_iseq_new_top(const rb_ast_body_t *ast, VALUE name, VALUE path, VALUE realpath, const rb_iseq_t *parent);
+rb_iseq_t *rb_iseq_new_main(const rb_ast_body_t *ast, VALUE path, VALUE realpath, const rb_iseq_t *parent);
 rb_iseq_t *rb_iseq_new_with_opt(const rb_ast_body_t *ast, VALUE name, VALUE path, VALUE realpath, VALUE first_lineno,
-				const rb_iseq_t *parent, enum iseq_type, const rb_compile_option_t*);
+                                const rb_iseq_t *parent, enum iseq_type, const rb_compile_option_t *);
 struct iseq_link_anchor;
-struct rb_iseq_new_with_callback_callback_func {
+struct rb_iseq_new_with_callback_callback_func
+{
     VALUE flags;
     VALUE reserved;
     void (*func)(rb_iseq_t *, struct iseq_link_anchor *, const void *);
@@ -1023,9 +1076,9 @@ rb_iseq_new_with_callback_new_callback(
     VALUE memo = rb_imemo_new(imemo_ifunc, (VALUE)func, (VALUE)ptr, Qundef, Qfalse);
     return (struct rb_iseq_new_with_callback_callback_func *)memo;
 }
-rb_iseq_t *rb_iseq_new_with_callback(const struct rb_iseq_new_with_callback_callback_func * ifunc,
-    VALUE name, VALUE path, VALUE realpath, VALUE first_lineno,
-    const rb_iseq_t *parent, enum iseq_type, const rb_compile_option_t*);
+rb_iseq_t *rb_iseq_new_with_callback(const struct rb_iseq_new_with_callback_callback_func *ifunc,
+                                     VALUE name, VALUE path, VALUE realpath, VALUE first_lineno,
+                                     const rb_iseq_t *parent, enum iseq_type, const rb_compile_option_t *);
 
 VALUE rb_iseq_disasm(const rb_iseq_t *iseq);
 int rb_iseq_disasm_insn(VALUE str, const VALUE *iseqval, size_t pos, const rb_iseq_t *iseq, VALUE child);
@@ -1039,15 +1092,17 @@ RUBY_EXTERN VALUE rb_block_param_proxy;
 RUBY_SYMBOL_EXPORT_END
 
 #define GetProcPtr(obj, ptr) \
-  GetCoreDataFromValue((obj), rb_proc_t, (ptr))
+    GetCoreDataFromValue((obj), rb_proc_t, (ptr))
 
-typedef struct {
+typedef struct
+{
     const struct rb_block block;
-    unsigned int is_from_method: 1;	/* bool */
-    unsigned int is_lambda: 1;		/* bool */
+    unsigned int is_from_method : 1; /* bool */
+    unsigned int is_lambda : 1;      /* bool */
 } rb_proc_t;
 
-typedef struct {
+typedef struct
+{
     VALUE flags; /* imemo header */
     rb_iseq_t *iseq;
     const VALUE *ep;
@@ -1058,9 +1113,10 @@ typedef struct {
 extern const rb_data_type_t ruby_binding_data_type;
 
 #define GetBindingPtr(obj, ptr) \
-  GetCoreDataFromValue((obj), rb_binding_t, (ptr))
+    GetCoreDataFromValue((obj), rb_binding_t, (ptr))
 
-typedef struct {
+typedef struct
+{
     const struct rb_block block;
     const VALUE pathobj;
     unsigned short first_lineno;
@@ -1068,24 +1124,27 @@ typedef struct {
 
 /* used by compile time and send insn */
 
-enum vm_check_match_type {
+enum vm_check_match_type
+{
     VM_CHECKMATCH_TYPE_WHEN = 1,
     VM_CHECKMATCH_TYPE_CASE = 2,
     VM_CHECKMATCH_TYPE_RESCUE = 3
 };
 
-#define VM_CHECKMATCH_TYPE_MASK   0x03
-#define VM_CHECKMATCH_ARRAY       0x04
+#define VM_CHECKMATCH_TYPE_MASK 0x03
+#define VM_CHECKMATCH_ARRAY 0x04
 
-enum vm_special_object_type {
+enum vm_special_object_type
+{
     VM_SPECIAL_OBJECT_VMCORE = 1,
     VM_SPECIAL_OBJECT_CBASE,
     VM_SPECIAL_OBJECT_CONST_BASE
 };
 
-enum vm_svar_index {
-    VM_SVAR_LASTLINE = 0,      /* $_ */
-    VM_SVAR_BACKREF = 1,       /* $~ */
+enum vm_svar_index
+{
+    VM_SVAR_LASTLINE = 0, /* $_ */
+    VM_SVAR_BACKREF = 1,  /* $~ */
 
     VM_SVAR_EXTRA_START = 2,
     VM_SVAR_FLIPFLOP_START = 2 /* flipflop */
@@ -1105,17 +1164,17 @@ typedef VALUE CDHASH;
 #define FUNC_FASTCALL(x) x
 #endif
 
-typedef rb_control_frame_t *
-  (FUNC_FASTCALL(*rb_insn_func_t))(rb_execution_context_t *, rb_control_frame_t *);
+typedef rb_control_frame_t *(FUNC_FASTCALL(*rb_insn_func_t))(rb_execution_context_t *, rb_control_frame_t *);
 
-#define VM_TAGGED_PTR_SET(p, tag)  ((VALUE)(p) | (tag))
+#define VM_TAGGED_PTR_SET(p, tag) ((VALUE)(p) | (tag))
 #define VM_TAGGED_PTR_REF(v, mask) ((void *)((v) & ~mask))
 
-#define GC_GUARDED_PTR(p)     VM_TAGGED_PTR_SET((p), 0x01)
+#define GC_GUARDED_PTR(p) VM_TAGGED_PTR_SET((p), 0x01)
 #define GC_GUARDED_PTR_REF(p) VM_TAGGED_PTR_REF((p), 0x03)
-#define GC_GUARDED_PTR_P(p)   (((VALUE)(p)) & 0x01)
+#define GC_GUARDED_PTR_P(p) (((VALUE)(p)) & 0x01)
 
-enum {
+enum
+{
     /* Frame/Environment flag bits:
      *   MMMM MMMM MMMM MMMM ____ _FFF FFFF EEEX (LSB)
      *
@@ -1127,40 +1186,40 @@ enum {
 
     /* frame types */
     VM_FRAME_MAGIC_METHOD = 0x11110001,
-    VM_FRAME_MAGIC_BLOCK  = 0x22220001,
-    VM_FRAME_MAGIC_CLASS  = 0x33330001,
-    VM_FRAME_MAGIC_TOP    = 0x44440001,
-    VM_FRAME_MAGIC_CFUNC  = 0x55550001,
-    VM_FRAME_MAGIC_IFUNC  = 0x66660001,
-    VM_FRAME_MAGIC_EVAL   = 0x77770001,
+    VM_FRAME_MAGIC_BLOCK = 0x22220001,
+    VM_FRAME_MAGIC_CLASS = 0x33330001,
+    VM_FRAME_MAGIC_TOP = 0x44440001,
+    VM_FRAME_MAGIC_CFUNC = 0x55550001,
+    VM_FRAME_MAGIC_IFUNC = 0x66660001,
+    VM_FRAME_MAGIC_EVAL = 0x77770001,
     VM_FRAME_MAGIC_RESCUE = 0x78880001,
-    VM_FRAME_MAGIC_DUMMY  = 0x79990001,
+    VM_FRAME_MAGIC_DUMMY = 0x79990001,
 
-    VM_FRAME_MAGIC_MASK   = 0x7fff0001,
+    VM_FRAME_MAGIC_MASK = 0x7fff0001,
 
     /* frame flag */
-    VM_FRAME_FLAG_PASSED    = 0x0010,
-    VM_FRAME_FLAG_FINISH    = 0x0020,
-    VM_FRAME_FLAG_BMETHOD   = 0x0040,
-    VM_FRAME_FLAG_CFRAME    = 0x0080,
-    VM_FRAME_FLAG_LAMBDA    = 0x0100,
+    VM_FRAME_FLAG_PASSED = 0x0010,
+    VM_FRAME_FLAG_FINISH = 0x0020,
+    VM_FRAME_FLAG_BMETHOD = 0x0040,
+    VM_FRAME_FLAG_CFRAME = 0x0080,
+    VM_FRAME_FLAG_LAMBDA = 0x0100,
     VM_FRAME_FLAG_MODIFIED_BLOCK_PARAM = 0x0200,
     VM_FRAME_FLAG_CFRAME_KW = 0x0400,
 
     /* env flag */
-    VM_ENV_FLAG_LOCAL       = 0x0002,
-    VM_ENV_FLAG_ESCAPED     = 0x0004,
+    VM_ENV_FLAG_LOCAL = 0x0002,
+    VM_ENV_FLAG_ESCAPED = 0x0004,
     VM_ENV_FLAG_WB_REQUIRED = 0x0008
 };
 
-#define VM_ENV_DATA_SIZE             ( 3)
+#define VM_ENV_DATA_SIZE (3)
 
-#define VM_ENV_DATA_INDEX_ME_CREF    (-2) /* ep[-2] */
-#define VM_ENV_DATA_INDEX_SPECVAL    (-1) /* ep[-1] */
-#define VM_ENV_DATA_INDEX_FLAGS      ( 0) /* ep[ 0] */
-#define VM_ENV_DATA_INDEX_ENV        ( 1) /* ep[ 1] */
+#define VM_ENV_DATA_INDEX_ME_CREF (-2) /* ep[-2] */
+#define VM_ENV_DATA_INDEX_SPECVAL (-1) /* ep[-1] */
+#define VM_ENV_DATA_INDEX_FLAGS (0)    /* ep[ 0] */
+#define VM_ENV_DATA_INDEX_ENV (1)      /* ep[ 1] */
 
-#define VM_ENV_INDEX_LAST_LVAR              (-VM_ENV_DATA_SIZE)
+#define VM_ENV_INDEX_LAST_LVAR (-VM_ENV_DATA_SIZE)
 
 static inline void VM_FORCE_WRITE_SPECIAL_CONST(const VALUE *ptr, VALUE special_const_value);
 
@@ -1225,7 +1284,7 @@ rb_obj_is_iseq(VALUE iseq)
 }
 
 #if VM_CHECK_MODE > 0
-#define RUBY_VM_NORMAL_ISEQ_P(iseq)  rb_obj_is_iseq((VALUE)iseq)
+#define RUBY_VM_NORMAL_ISEQ_P(iseq) rb_obj_is_iseq((VALUE)iseq)
 #endif
 
 static inline int
@@ -1243,9 +1302,9 @@ VM_FRAME_RUBYFRAME_P(const rb_control_frame_t *cfp)
 }
 
 #define RUBYVM_CFUNC_FRAME_P(cfp) \
-  (VM_FRAME_TYPE(cfp) == VM_FRAME_MAGIC_CFUNC)
+    (VM_FRAME_TYPE(cfp) == VM_FRAME_MAGIC_CFUNC)
 
-#define VM_GUARDED_PREV_EP(ep)         GC_GUARDED_PTR(ep)
+#define VM_GUARDED_PREV_EP(ep) GC_GUARDED_PTR(ep)
 #define VM_BLOCK_HANDLER_NONE 0
 
 static inline int
@@ -1339,11 +1398,11 @@ void rb_vm_block_copy(VALUE obj, const struct rb_block *dst, const struct rb_blo
 
 VALUE rb_vm_frame_block_handler(const rb_control_frame_t *cfp);
 
-#define RUBY_VM_PREVIOUS_CONTROL_FRAME(cfp) ((cfp)+1)
+#define RUBY_VM_PREVIOUS_CONTROL_FRAME(cfp) ((cfp) + 1)
 #define RUBY_VM_NEXT_CONTROL_FRAME(cfp) ((cfp)-1)
 
 #define RUBY_VM_VALID_CONTROL_FRAME_P(cfp, ecfp) \
-  ((void *)(ecfp) > (void *)(cfp))
+    ((void *)(ecfp) > (void *)(cfp))
 
 static inline const rb_control_frame_t *
 RUBY_VM_END_CONTROL_FRAME(const rb_execution_context_t *ec)
@@ -1360,15 +1419,17 @@ RUBY_VM_CONTROL_FRAME_STACK_OVERFLOW_P(const rb_execution_context_t *ec, const r
 static inline int
 VM_BH_ISEQ_BLOCK_P(VALUE block_handler)
 {
-    if ((block_handler & 0x03) == 0x01) {
+    if ((block_handler & 0x03) == 0x01)
+    {
 #if VM_CHECK_MODE > 0
-	struct rb_captured_block *captured = VM_TAGGED_PTR_REF(block_handler, 0x03);
-	VM_ASSERT(imemo_type_p(captured->code.val, imemo_iseq));
+        struct rb_captured_block *captured = VM_TAGGED_PTR_REF(block_handler, 0x03);
+        VM_ASSERT(imemo_type_p(captured->code.val, imemo_iseq));
 #endif
-	return 1;
+        return 1;
     }
-    else {
-	return 0;
+    else
+    {
+        return 0;
     }
 }
 
@@ -1391,15 +1452,17 @@ VM_BH_TO_ISEQ_BLOCK(VALUE block_handler)
 static inline int
 VM_BH_IFUNC_P(VALUE block_handler)
 {
-    if ((block_handler & 0x03) == 0x03) {
+    if ((block_handler & 0x03) == 0x03)
+    {
 #if VM_CHECK_MODE > 0
-	struct rb_captured_block *captured = (void *)(block_handler & ~0x03);
-	VM_ASSERT(imemo_type_p(captured->code.val, imemo_ifunc));
+        struct rb_captured_block *captured = (void *)(block_handler & ~0x03);
+        VM_ASSERT(imemo_type_p(captured->code.val, imemo_ifunc));
 #endif
-	return 1;
+        return 1;
     }
-    else {
-	return 0;
+    else
+    {
+        return 0;
     }
 }
 
@@ -1430,51 +1493,56 @@ VM_BH_TO_CAPT_BLOCK(VALUE block_handler)
 static inline enum rb_block_handler_type
 vm_block_handler_type(VALUE block_handler)
 {
-    if (VM_BH_ISEQ_BLOCK_P(block_handler)) {
-	return block_handler_type_iseq;
+    if (VM_BH_ISEQ_BLOCK_P(block_handler))
+    {
+        return block_handler_type_iseq;
     }
-    else if (VM_BH_IFUNC_P(block_handler)) {
-	return block_handler_type_ifunc;
+    else if (VM_BH_IFUNC_P(block_handler))
+    {
+        return block_handler_type_ifunc;
     }
-    else if (SYMBOL_P(block_handler)) {
-	return block_handler_type_symbol;
+    else if (SYMBOL_P(block_handler))
+    {
+        return block_handler_type_symbol;
     }
-    else {
-	VM_ASSERT(rb_obj_is_proc(block_handler));
-	return block_handler_type_proc;
+    else
+    {
+        VM_ASSERT(rb_obj_is_proc(block_handler));
+        return block_handler_type_proc;
     }
 }
 
 static inline void
-vm_block_handler_verify(MAYBE_UNUSED(VALUE block_handler))
+    vm_block_handler_verify(MAYBE_UNUSED(VALUE block_handler))
 {
     VM_ASSERT(block_handler == VM_BLOCK_HANDLER_NONE ||
-	      (vm_block_handler_type(block_handler), 1));
+              (vm_block_handler_type(block_handler), 1));
 }
 
 static inline int
 vm_cfp_forwarded_bh_p(const rb_control_frame_t *cfp, VALUE block_handler)
 {
-    return ((VALUE) cfp->block_code) == block_handler;
+    return ((VALUE)cfp->block_code) == block_handler;
 }
 
 static inline enum rb_block_type
 vm_block_type(const struct rb_block *block)
 {
 #if VM_CHECK_MODE > 0
-    switch (block->type) {
-      case block_type_iseq:
-	VM_ASSERT(imemo_type_p(block->as.captured.code.val, imemo_iseq));
-	break;
-      case block_type_ifunc:
-	VM_ASSERT(imemo_type_p(block->as.captured.code.val, imemo_ifunc));
-	break;
-      case block_type_symbol:
-	VM_ASSERT(SYMBOL_P(block->as.symbol));
-	break;
-      case block_type_proc:
-	VM_ASSERT(rb_obj_is_proc(block->as.proc));
-	break;
+    switch (block->type)
+    {
+    case block_type_iseq:
+        VM_ASSERT(imemo_type_p(block->as.captured.code.val, imemo_iseq));
+        break;
+    case block_type_ifunc:
+        VM_ASSERT(imemo_type_p(block->as.captured.code.val, imemo_ifunc));
+        break;
+    case block_type_symbol:
+        VM_ASSERT(SYMBOL_P(block->as.symbol));
+        break;
+    case block_type_proc:
+        VM_ASSERT(rb_obj_is_proc(block->as.proc));
+        break;
     }
 #endif
     return block->type;
@@ -1512,11 +1580,15 @@ vm_proc_ep(VALUE procval)
 static inline const rb_iseq_t *
 vm_block_iseq(const struct rb_block *block)
 {
-    switch (vm_block_type(block)) {
-      case block_type_iseq: return rb_iseq_check(block->as.captured.code.iseq);
-      case block_type_proc: return vm_proc_iseq(block->as.proc);
-      case block_type_ifunc:
-      case block_type_symbol: return NULL;
+    switch (vm_block_type(block))
+    {
+    case block_type_iseq:
+        return rb_iseq_check(block->as.captured.code.iseq);
+    case block_type_proc:
+        return vm_proc_iseq(block->as.proc);
+    case block_type_ifunc:
+    case block_type_symbol:
+        return NULL;
     }
     VM_UNREACHABLE(vm_block_iseq);
     return NULL;
@@ -1525,11 +1597,15 @@ vm_block_iseq(const struct rb_block *block)
 static inline const VALUE *
 vm_block_ep(const struct rb_block *block)
 {
-    switch (vm_block_type(block)) {
-      case block_type_iseq:
-      case block_type_ifunc:  return block->as.captured.ep;
-      case block_type_proc:   return vm_proc_ep(block->as.proc);
-      case block_type_symbol: return NULL;
+    switch (vm_block_type(block))
+    {
+    case block_type_iseq:
+    case block_type_ifunc:
+        return block->as.captured.ep;
+    case block_type_proc:
+        return vm_proc_ep(block->as.proc);
+    case block_type_symbol:
+        return NULL;
     }
     VM_UNREACHABLE(vm_block_ep);
     return NULL;
@@ -1538,14 +1614,15 @@ vm_block_ep(const struct rb_block *block)
 static inline VALUE
 vm_block_self(const struct rb_block *block)
 {
-    switch (vm_block_type(block)) {
-      case block_type_iseq:
-      case block_type_ifunc:
-	return block->as.captured.self;
-      case block_type_proc:
-	return vm_block_self(vm_proc_block(block->as.proc));
-      case block_type_symbol:
-	return Qundef;
+    switch (vm_block_type(block))
+    {
+    case block_type_iseq:
+    case block_type_ifunc:
+        return block->as.captured.self;
+    case block_type_proc:
+        return vm_block_self(vm_proc_block(block->as.proc));
+    case block_type_symbol:
+        return Qundef;
     }
     VM_UNREACHABLE(vm_block_self);
     return Qundef;
@@ -1590,7 +1667,8 @@ extern void rb_vmdebug_stack_dump_raw(const rb_execution_context_t *ec, const rb
 extern void rb_vmdebug_debug_print_pre(const rb_execution_context_t *ec, const rb_control_frame_t *cfp, const VALUE *_pc);
 extern void rb_vmdebug_debug_print_post(const rb_execution_context_t *ec, const rb_control_frame_t *cfp
 #if OPT_STACK_CACHING
-    , VALUE reg_a, VALUE reg_b
+                                        ,
+                                        VALUE reg_a, VALUE reg_b
 #endif
 );
 
@@ -1636,7 +1714,7 @@ const VALUE *rb_binding_add_dynavars(VALUE bindval, rb_binding_t *bind, int dync
 void rb_vm_inc_const_missing_count(void);
 void rb_vm_gvl_destroy(rb_vm_t *vm);
 VALUE rb_vm_call_kw(rb_execution_context_t *ec, VALUE recv, VALUE id, int argc,
-                 const VALUE *argv, const rb_callable_method_entry_t *me, int kw_splat);
+                    const VALUE *argv, const rb_callable_method_entry_t *me, int kw_splat);
 MJIT_STATIC void rb_vm_pop_frame(rb_execution_context_t *ec);
 
 void rb_thread_start_timer_thread(void);
@@ -1692,17 +1770,23 @@ MJIT_STATIC const rb_callable_method_entry_t *rb_vm_frame_method_entry(const rb_
 
 #define sysstack_error GET_VM()->special_exceptions[ruby_error_sysstack]
 
-#define RUBY_CONST_ASSERT(expr) (1/!!(expr)) /* expr must be a compile-time constant */
-#define VM_STACK_OVERFLOWED_P(cfp, sp, margin) \
-    (!RUBY_CONST_ASSERT(sizeof(*(sp)) == sizeof(VALUE)) || \
+#define RUBY_CONST_ASSERT(expr) (1 / !!(expr)) /* expr must be a compile-time constant */
+#define VM_STACK_OVERFLOWED_P(cfp, sp, margin)                           \
+    (!RUBY_CONST_ASSERT(sizeof(*(sp)) == sizeof(VALUE)) ||               \
      !RUBY_CONST_ASSERT(sizeof(*(cfp)) == sizeof(rb_control_frame_t)) || \
      ((rb_control_frame_t *)((sp) + (margin)) + 1) >= (cfp))
-#define WHEN_VM_STACK_OVERFLOWED(cfp, sp, margin) \
-    if (LIKELY(!VM_STACK_OVERFLOWED_P(cfp, sp, margin))) {(void)0;} else /* overflowed */
+#define WHEN_VM_STACK_OVERFLOWED(cfp, sp, margin)        \
+    if (LIKELY(!VM_STACK_OVERFLOWED_P(cfp, sp, margin))) \
+    {                                                    \
+        (void)0;                                         \
+    }                                                    \
+    else /* overflowed */
 #define CHECK_VM_STACK_OVERFLOW0(cfp, sp, margin) \
-    WHEN_VM_STACK_OVERFLOWED(cfp, sp, margin) vm_stackoverflow()
-#define CHECK_VM_STACK_OVERFLOW(cfp, margin) \
-    WHEN_VM_STACK_OVERFLOWED(cfp, (cfp)->sp, margin) vm_stackoverflow()
+    WHEN_VM_STACK_OVERFLOWED(cfp, sp, margin)     \
+    vm_stackoverflow()
+#define CHECK_VM_STACK_OVERFLOW(cfp, margin)         \
+    WHEN_VM_STACK_OVERFLOWED(cfp, (cfp)->sp, margin) \
+    vm_stackoverflow()
 
 VALUE rb_catch_protect(VALUE t, rb_block_call_func *func, VALUE data, enum ruby_tag_type *stateptr);
 
@@ -1715,13 +1799,13 @@ RUBY_EXTERN rb_vm_t *ruby_current_vm_ptr;
 RUBY_EXTERN rb_execution_context_t *ruby_current_execution_context_ptr;
 RUBY_EXTERN rb_event_flag_t ruby_vm_event_flags;
 RUBY_EXTERN rb_event_flag_t ruby_vm_event_enabled_global_flags;
-RUBY_EXTERN unsigned int    ruby_vm_event_local_num;
+RUBY_EXTERN unsigned int ruby_vm_event_local_num;
 
 RUBY_SYMBOL_EXPORT_END
 
-#define GET_VM()     rb_current_vm()
+#define GET_VM() rb_current_vm()
 #define GET_THREAD() rb_current_thread()
-#define GET_EC()     rb_current_execution_context()
+#define GET_EC() rb_current_execution_context()
 
 static inline rb_thread_t *
 rb_ec_thread_ptr(const rb_execution_context_t *ec)
@@ -1733,11 +1817,13 @@ static inline rb_vm_t *
 rb_ec_vm_ptr(const rb_execution_context_t *ec)
 {
     const rb_thread_t *th = rb_ec_thread_ptr(ec);
-    if (th) {
-	return th->vm;
+    if (th)
+    {
+        return th->vm;
     }
-    else {
-	return NULL;
+    else
+    {
+        return NULL;
     }
 }
 
@@ -1758,9 +1844,9 @@ static inline rb_vm_t *
 rb_current_vm(void)
 {
     VM_ASSERT(ruby_current_vm_ptr == NULL ||
-	      ruby_current_execution_context_ptr == NULL ||
-	      rb_ec_thread_ptr(GET_EC()) == NULL ||
-	      rb_ec_vm_ptr(GET_EC()) == ruby_current_vm_ptr);
+              ruby_current_execution_context_ptr == NULL ||
+              rb_ec_thread_ptr(GET_EC()) == NULL ||
+              rb_ec_vm_ptr(GET_EC()) == ruby_current_vm_ptr);
     return ruby_current_vm_ptr;
 }
 
@@ -1773,7 +1859,8 @@ rb_thread_set_current_raw(const rb_thread_t *th)
 static inline void
 rb_thread_set_current(rb_thread_t *th)
 {
-    if (th->vm->running_thread != th) {
+    if (th->vm->running_thread != th)
+    {
         th->running_time_us = 0;
     }
     rb_thread_set_current_raw(th);
@@ -1784,20 +1871,21 @@ rb_thread_set_current(rb_thread_t *th)
 #error "unsupported thread model"
 #endif
 
-enum {
-    TIMER_INTERRUPT_MASK         = 0x01,
-    PENDING_INTERRUPT_MASK       = 0x02,
+enum
+{
+    TIMER_INTERRUPT_MASK = 0x01,
+    PENDING_INTERRUPT_MASK = 0x02,
     POSTPONED_JOB_INTERRUPT_MASK = 0x04,
-    TRAP_INTERRUPT_MASK	         = 0x08
+    TRAP_INTERRUPT_MASK = 0x08
 };
 
-#define RUBY_VM_SET_TIMER_INTERRUPT(ec)		ATOMIC_OR((ec)->interrupt_flag, TIMER_INTERRUPT_MASK)
-#define RUBY_VM_SET_INTERRUPT(ec)		ATOMIC_OR((ec)->interrupt_flag, PENDING_INTERRUPT_MASK)
-#define RUBY_VM_SET_POSTPONED_JOB_INTERRUPT(ec)	ATOMIC_OR((ec)->interrupt_flag, POSTPONED_JOB_INTERRUPT_MASK)
-#define RUBY_VM_SET_TRAP_INTERRUPT(ec)		ATOMIC_OR((ec)->interrupt_flag, TRAP_INTERRUPT_MASK)
-#define RUBY_VM_INTERRUPTED(ec)			((ec)->interrupt_flag & ~(ec)->interrupt_mask & \
-						 (PENDING_INTERRUPT_MASK|TRAP_INTERRUPT_MASK))
-#define RUBY_VM_INTERRUPTED_ANY(ec)		((ec)->interrupt_flag & ~(ec)->interrupt_mask)
+#define RUBY_VM_SET_TIMER_INTERRUPT(ec) ATOMIC_OR((ec)->interrupt_flag, TIMER_INTERRUPT_MASK)
+#define RUBY_VM_SET_INTERRUPT(ec) ATOMIC_OR((ec)->interrupt_flag, PENDING_INTERRUPT_MASK)
+#define RUBY_VM_SET_POSTPONED_JOB_INTERRUPT(ec) ATOMIC_OR((ec)->interrupt_flag, POSTPONED_JOB_INTERRUPT_MASK)
+#define RUBY_VM_SET_TRAP_INTERRUPT(ec) ATOMIC_OR((ec)->interrupt_flag, TRAP_INTERRUPT_MASK)
+#define RUBY_VM_INTERRUPTED(ec) ((ec)->interrupt_flag & ~(ec)->interrupt_mask & \
+                                 (PENDING_INTERRUPT_MASK | TRAP_INTERRUPT_MASK))
+#define RUBY_VM_INTERRUPTED_ANY(ec) ((ec)->interrupt_flag & ~(ec)->interrupt_mask)
 
 VALUE rb_exc_set_backtrace(VALUE exc, VALUE bt);
 int rb_signal_buff_size(void);
@@ -1811,7 +1899,7 @@ void rb_threadptr_unlock_all_locking_mutexes(rb_thread_t *th);
 void rb_threadptr_pending_interrupt_clear(rb_thread_t *th);
 void rb_threadptr_pending_interrupt_enque(rb_thread_t *th, VALUE v);
 VALUE rb_ec_get_errinfo(const rb_execution_context_t *ec);
-void rb_ec_error_print(rb_execution_context_t * volatile ec, volatile VALUE errinfo);
+void rb_ec_error_print(rb_execution_context_t *volatile ec, volatile VALUE errinfo);
 void rb_execution_context_update(const rb_execution_context_t *ec);
 void rb_execution_context_mark(const rb_execution_context_t *ec);
 void rb_fiber_close(rb_fiber_t *fib);
@@ -1822,14 +1910,16 @@ static inline void
 rb_vm_check_ints(rb_execution_context_t *ec)
 {
     VM_ASSERT(ec == GET_EC());
-    if (UNLIKELY(RUBY_VM_INTERRUPTED_ANY(ec))) {
-	rb_threadptr_execute_interrupts(rb_ec_thread_ptr(ec), 0);
+    if (UNLIKELY(RUBY_VM_INTERRUPTED_ANY(ec)))
+    {
+        rb_threadptr_execute_interrupts(rb_ec_thread_ptr(ec), 0);
     }
 }
 
 /* tracer */
 
-struct rb_trace_arg_struct {
+struct rb_trace_arg_struct
+{
     rb_event_flag_t event;
     rb_execution_context_t *ec;
     const rb_control_frame_t *cfp;
@@ -1853,14 +1943,17 @@ void rb_hook_list_remove_tracepoint(rb_hook_list_t *list, VALUE tpval);
 
 void rb_exec_event_hooks(struct rb_trace_arg_struct *trace_arg, rb_hook_list_t *hooks, int pop_p);
 
-#define EXEC_EVENT_HOOK_ORIG(ec_, hooks_, flag_, self_, id_, called_id_, klass_, data_, pop_p_) do { \
-    const rb_event_flag_t flag_arg_ = (flag_); \
-    rb_hook_list_t *hooks_arg_ = (hooks_); \
-    if (UNLIKELY((hooks_arg_)->events & (flag_arg_))) { \
-        /* defer evaluating the other arguments */ \
-        rb_exec_event_hook_orig(ec_, hooks_arg_, flag_arg_, self_, id_, called_id_, klass_, data_, pop_p_); \
-    } \
-} while (0)
+#define EXEC_EVENT_HOOK_ORIG(ec_, hooks_, flag_, self_, id_, called_id_, klass_, data_, pop_p_)                 \
+    do                                                                                                          \
+    {                                                                                                           \
+        const rb_event_flag_t flag_arg_ = (flag_);                                                              \
+        rb_hook_list_t *hooks_arg_ = (hooks_);                                                                  \
+        if (UNLIKELY((hooks_arg_)->events & (flag_arg_)))                                                       \
+        {                                                                                                       \
+            /* defer evaluating the other arguments */                                                          \
+            rb_exec_event_hook_orig(ec_, hooks_arg_, flag_arg_, self_, id_, called_id_, klass_, data_, pop_p_); \
+        }                                                                                                       \
+    } while (0)
 
 static inline void
 rb_exec_event_hook_orig(rb_execution_context_t *ec, rb_hook_list_t *hooks, rb_event_flag_t flag,
@@ -1891,17 +1984,16 @@ rb_vm_global_hooks(const rb_execution_context_t *ec)
 }
 
 #define EXEC_EVENT_HOOK(ec_, flag_, self_, id_, called_id_, klass_, data_) \
-  EXEC_EVENT_HOOK_ORIG(ec_, rb_vm_global_hooks(ec_), flag_, self_, id_, called_id_, klass_, data_, 0)
+    EXEC_EVENT_HOOK_ORIG(ec_, rb_vm_global_hooks(ec_), flag_, self_, id_, called_id_, klass_, data_, 0)
 
 #define EXEC_EVENT_HOOK_AND_POP_FRAME(ec_, flag_, self_, id_, called_id_, klass_, data_) \
-  EXEC_EVENT_HOOK_ORIG(ec_, rb_vm_global_hooks(ec_), flag_, self_, id_, called_id_, klass_, data_, 1)
+    EXEC_EVENT_HOOK_ORIG(ec_, rb_vm_global_hooks(ec_), flag_, self_, id_, called_id_, klass_, data_, 1)
 
 static inline void
 rb_exec_event_hook_script_compiled(rb_execution_context_t *ec, const rb_iseq_t *iseq, VALUE eval_script)
 {
     EXEC_EVENT_HOOK(ec, RUBY_EVENT_SCRIPT_COMPILED, ec->cfp->self, 0, 0, 0,
-                    NIL_P(eval_script) ? (VALUE)iseq :
-                    rb_ary_new_from_args(2, eval_script, (VALUE)iseq));
+                    NIL_P(eval_script) ? (VALUE)iseq : rb_ary_new_from_args(2, eval_script, (VALUE)iseq));
 }
 
 void rb_vm_trap_exit(rb_vm_t *vm);
@@ -1911,8 +2003,8 @@ RUBY_SYMBOL_EXPORT_BEGIN
 int rb_thread_check_trap_pending(void);
 
 /* #define RUBY_EVENT_RESERVED_FOR_INTERNAL_USE 0x030000 */ /* from vm_core.h */
-#define RUBY_EVENT_COVERAGE_LINE                0x010000
-#define RUBY_EVENT_COVERAGE_BRANCH              0x020000
+#define RUBY_EVENT_COVERAGE_LINE 0x010000
+#define RUBY_EVENT_COVERAGE_BRANCH 0x020000
 
 extern VALUE rb_get_coverages(void);
 extern void rb_set_coverages(VALUE, int, VALUE);

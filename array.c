@@ -6620,6 +6620,11 @@ rb_ary_deconstruct(VALUE ary)
     return ary;
 }
 
+static VALUE
+ary_second(VALUE self) {
+    return rb_ary_entry(self, 1);
+}
+
 /*
  *  Arrays are ordered, integer-indexed collections of any object.
  *
@@ -6984,6 +6989,8 @@ Init_Array(void)
     rb_define_method(rb_cArray, "one?", rb_ary_one_p, -1);
     rb_define_method(rb_cArray, "dig", rb_ary_dig, -1);
     rb_define_method(rb_cArray, "sum", rb_ary_sum, -1);
+
+    rb_define_method(rb_cArray, "second", ary_second, 0);
 
     rb_define_method(rb_cArray, "deconstruct", rb_ary_deconstruct, 0);
 }

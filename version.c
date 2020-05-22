@@ -118,6 +118,7 @@ Init_ruby_description(void)
 void
 ruby_show_version(void)
 {
+    printf("hhhhh, i am in MRI..");
     if (MJIT_OPTS_ON) {
         PRINT(description_with_jit);
     }
@@ -138,5 +139,6 @@ void
 ruby_show_copyright(void)
 {
     PRINT(copyright);
+    printf("hhhhh, i am in MRI..");
     fflush(stdout);
 }
