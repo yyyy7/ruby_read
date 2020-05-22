@@ -156,15 +156,18 @@ hash_table_index(struct rb_id_table *tbl, id_key_t key)
 static void
 hash_table_raw_insert(struct rb_id_table *tbl, id_key_t key, VALUE val)
 {
+    const char* key_name = key2name(key);
     int mask = tbl->capa - 1;
     int ix = key & mask;
     int d = 1;
     assert(key != 0);
+    printf("key: %s, index: %d\n", key_name, ix); 
     while (ITEM_KEY_ISSET(tbl, ix))
     {
         ITEM_SET_COLLIDED(tbl, ix);
         ix = (ix + d) & mask;
         d++;
+    printf("rehashing.. key: %s, index: %d\n", key_name, ix); 
     }
     tbl->num++;
     if (!ITEM_COLLIDED(tbl, ix))
@@ -174,7 +177,7 @@ hash_table_raw_insert(struct rb_id_table *tbl, id_key_t key, VALUE val)
     ITEM_SET_KEY(tbl, ix, key);
     tbl->items[ix].val = val;
 
-    printf("key: %s, index: %d\n", key2name(key), ix); 
+    printf("key: %s, index: %d\n", key_name, ix); 
 }
 
 static int
